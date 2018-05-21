@@ -1,0 +1,15 @@
+﻿<Properties StartupConfiguration="{A785BBFB-CD6C-48B7-8BEA-DC241ACB6D70}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Engine/src/ScriptCs.Contracts/ScriptCs.Contracts.csproj">
+    <Files>
+      <File FileName=".nuget/NuGet.Config" Line="3" Column="13" />
+      <File FileName="Engine/src/ScriptCs.Contracts/ScriptCs.Contracts.csproj" Line="124" Column="10" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Kernel PreferredExecutionTarget="MonoDevelop.Default" />
+</Properties>
