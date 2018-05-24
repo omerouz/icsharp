@@ -50,8 +50,12 @@ namespace iCSharp.Kernel.Shell
             // 3: Evaluate the C# code
             string code = executeRequest.Code;
             ExecutionResult results = this.replEngine.Execute(code);
+
             string codeOutput = this.GetCodeOutput(results);
+
+            // TODO: add error logs here
             string codeHtmlOutput = this.GetCodeHtmlOutput(results);
+
 
             Dictionary<string, object> data = new Dictionary<string, object>()
             {
@@ -76,6 +80,7 @@ namespace iCSharp.Kernel.Shell
             // 6: Send IDLE status message to IOPub
             this.SendMessageToIOPub(message, ioPub, StatusValues.Idle);
 
+            //THIS IS IMPORTANT: LINE COUNTER IN OUTPUT OF RESULTS FROM EXECUTION
             this.executionCount += 1;
 
         }
@@ -116,6 +121,7 @@ namespace iCSharp.Kernel.Shell
             this.logger.Info("Message Sent");
         }
 
+        //THIS IS IMPORTANT
         public void SendOutputMessageToIOPub(Message message, PublisherSocket ioPub, DisplayData data)
         {
             Dictionary<string,object> content = new Dictionary<string, object>();
@@ -127,6 +133,7 @@ namespace iCSharp.Kernel.Shell
                 JsonSerializer.Serialize(content), message.Header);
 
             this.logger.Info(string.Format("Sending message to IOPub {0}", JsonSerializer.Serialize(outputMessage)));
+            //are we printing here?
 			this.messageSender.Send(outputMessage, ioPub);
         }
 
