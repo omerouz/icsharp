@@ -50,10 +50,11 @@ namespace iCSharp.Kernel.Shell
             // 3: Evaluate the C# code
             string code = executeRequest.Code;
             ExecutionResult results = this.replEngine.Execute(code);
+            //TODO:Get execution error result
 
             string codeOutput = this.GetCodeOutput(results);
 
-            // TODO: add error logs here
+            //TODO: print error log here
             string codeHtmlOutput = this.GetCodeHtmlOutput(results);
 
 

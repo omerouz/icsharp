@@ -7,11 +7,15 @@ namespace iCSharp.Kernel.ScriptEngine
 {
     public class MemoryBufferConsole : IConsole
     {
-        private const ConsoleColor DefaultConsoleColor = ConsoleColor.Black;
+        //color of execution result
+        private const ConsoleColor DefaultForegroundColor = ConsoleColor.Black;
+        //private const ConsoleColor DefaultBackgroundColor = ConsoleColor.Magenta;
+
 
         private List<Tuple<string,ConsoleColor>> buffer;
 
         private ConsoleColor foregroundColor;
+        //private ConsoleColor backgroundColor;
 
         public IEnumerable<Tuple<string, ConsoleColor>> GetAllInBuffer()
         {
@@ -58,7 +62,7 @@ namespace iCSharp.Kernel.ScriptEngine
 
         public void ResetColor()
         {
-            ForegroundColor = DefaultConsoleColor;
+            ForegroundColor = DefaultForegroundColor;
         }
 
         public ConsoleColor ForegroundColor
@@ -68,7 +72,7 @@ namespace iCSharp.Kernel.ScriptEngine
                 if (this.foregroundColor == ConsoleColor.Yellow || this.foregroundColor == ConsoleColor.White ||
                     this.foregroundColor == ConsoleColor.DarkYellow)
                 {
-                    return DefaultConsoleColor;
+                    return DefaultForegroundColor;
                 }
 
                 return this.foregroundColor;
@@ -77,11 +81,19 @@ namespace iCSharp.Kernel.ScriptEngine
             set { this.foregroundColor = value; }
         }
 
+        //public ConsoleColor BackgroundColor
+        //{
+        //    get {return DefaultBackgroundColor;}
+        //    set { this.backgroundColor = value; }
+        //}
+
+
         public string ReadLine(string prompt)
         {
             throw new NotImplementedException();
         }
 
         public int Width { get; }
+
     }
 }
