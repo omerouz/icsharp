@@ -5,13 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using iCSharp.Kernel.ScriptEngine;
 using System.Web;
 using iCSharp.Kernel.Helpers;
 
 namespace iCSharp.Kernel.Shell
 {
+    using System.IO;
     using Common.Logging;
     using Common.Serializer;
     using iCSharp.Messages;
@@ -50,11 +50,14 @@ namespace iCSharp.Kernel.Shell
             // 3: Evaluate the C# code
             string code = executeRequest.Code;
             ExecutionResult results = this.replEngine.Execute(code);
+
             //TODO:Get execution error result
+
+            TextWriter errorWriter = Console.Error;
+            Console.SetError(errorWriter);
 
             string codeOutput = this.GetCodeOutput(results);
 
-            //TODO: print error log here
             string codeHtmlOutput = this.GetCodeHtmlOutput(results);
 
 
@@ -134,7 +137,6 @@ namespace iCSharp.Kernel.Shell
                 JsonSerializer.Serialize(content), message.Header);
 
             this.logger.Info(string.Format("Sending message to IOPub {0}", JsonSerializer.Serialize(outputMessage)));
-            //are we printing here?
 			this.messageSender.Send(outputMessage, ioPub);
         }
 
