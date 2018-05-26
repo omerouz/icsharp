@@ -1,8 +1,8 @@
 ﻿<Properties StartupConfiguration="{A785BBFB-CD6C-48B7-8BEA-DC241ACB6D70}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Engine/src/ScriptCs.Contracts/ScriptCs.Contracts.csproj">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Common/packages.config">
     <Files>
-      <File FileName=".nuget/NuGet.Config" Line="3" Column="13" />
-      <File FileName="Engine/src/ScriptCs.Contracts/ScriptCs.Contracts.csproj" Line="124" Column="10" />
+      <File FileName=".nuget/NuGet.Config" Line="1" Column="1" />
+      <File FileName="Common/packages.config" Line="14" Column="12" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
