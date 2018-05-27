@@ -34,7 +34,7 @@ namespace iCSharp.Kernel.Shell
 			this.messageSender = messageSender;
         }
 
-        public void HandleMessage(Message message, RouterSocket serverSocket, PublisherSocket ioPub)
+        void IShellMessageHandler.HandleMessage(Message message, RouterSocket serverSocket, PublisherSocket ioPub)
         {
             this.logger.Debug(string.Format("Message Content {0}", message.Content));
             ExecuteRequest executeRequest = JsonSerializer.Deserialize<ExecuteRequest>(message.Content);
@@ -43,28 +43,41 @@ namespace iCSharp.Kernel.Shell
 
             // 1: Send Busy status on IOPub
             this.SendMessageToIOPub(message, ioPub, StatusValues.Busy);
-
             // 2: Send execute input on IOPub
             this.SendInputMessageToIOPub(message, ioPub, executeRequest.Code);
-
             // 3: Evaluate the C# code
+
+            DateTime appStart = DateTime.Now;
+            string fn = @"c:\temp\errlog" + appStart.ToString("yyyyMMddHHmm") + ".log";
+            TextWriter errStream = new StreamWriter(fn);
+            string appName = typeof(ExecuteRequestHandler).Assembly.Location;
+            appName = appName.Substring(appName.LastIndexOf('\\') + 1);
+            // Redirect standard error stream to file.
+            Console.SetError(errStream);
+            // Write file header.
+            Console.Error.WriteLine("Error Log for Application {0}", appName);
+            Console.Error.WriteLine();
+            Console.Error.WriteLine("Application started at {0}.", appStart);
+            Console.Error.WriteLine();
+
             string code = executeRequest.Code;
             ExecutionResult results = this.replEngine.Execute(code);
+            Console.WriteLine(code);
 
-            //TODO:Get execution error result
+            //4. Evaluate the C# error
 
-            TextWriter errorWriter = Console.Error;
-            Console.SetError(errorWriter);
+           
+           
 
             string codeOutput = this.GetCodeOutput(results);
 
             string codeHtmlOutput = this.GetCodeHtmlOutput(results);
 
-
             Dictionary<string, object> data = new Dictionary<string, object>()
             {
                 {"text/plain", codeOutput},
                 {"text/html", codeHtmlOutput}
+
             };
 
             DisplayData displayData = new DisplayData()
@@ -87,6 +100,9 @@ namespace iCSharp.Kernel.Shell
             //THIS IS IMPORTANT: LINE COUNTER IN OUTPUT OF RESULTS FROM EXECUTION
             this.executionCount += 1;
 
+            Console.Error.Close();
+
+
         }
 
         private string GetCodeOutput(ExecutionResult executionResult)
@@ -100,6 +116,20 @@ namespace iCSharp.Kernel.Shell
 
             return sb.ToString();
         }
+
+        ////Get execution error result
+        //private string GetErrorOutput(ExecutionResult executionResult)
+        //{
+        //    StringBuilder sb = new StringBuilder();
+
+        //    foreach (string result in executionResult.OutputResults)
+        //    {
+        //        sb.Append(result);
+        //    }
+
+        //    return sb.ToString();
+        //}
+        ////Get execution error result
 
         private string GetCodeHtmlOutput(ExecutionResult executionResult)
         {
@@ -125,7 +155,6 @@ namespace iCSharp.Kernel.Shell
             this.logger.Info("Message Sent");
         }
 
-        //THIS IS IMPORTANT
         public void SendOutputMessageToIOPub(Message message, PublisherSocket ioPub, DisplayData data)
         {
             Dictionary<string,object> content = new Dictionary<string, object>();
@@ -145,6 +174,7 @@ namespace iCSharp.Kernel.Shell
             Dictionary<string, object> content = new Dictionary<string, object>();
             content.Add("execution_count", 1);
             content.Add("code", code);
+            content.Add("inputToIO", "inputToIO");
 
             Message executeInputMessage = MessageBuilder.CreateMessage(MessageTypeValues.Input, JsonSerializer.Serialize(content),
                 message.Header);
@@ -166,11 +196,12 @@ namespace iCSharp.Kernel.Shell
                 JsonSerializer.Serialize(executeReply), message.Header);
 
             // Stick the original identifiers on the message so they'll be sent first
-            // Necessary since the shell socket is a ROUTER socket
+            // Necessary since the shell socket is a ROUTER socket 
             executeReplyMessage.Identifiers = message.Identifiers;
 
             this.logger.Info(string.Format("Sending message to Shell {0}", JsonSerializer.Serialize(executeReplyMessage)));
             this.messageSender.Send(executeReplyMessage, shellSocket);
         }
+
     }
 }
