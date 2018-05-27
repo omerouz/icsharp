@@ -49,7 +49,10 @@ namespace iCSharp.Kernel.Shell
 
             // 3: Evaluate the C# code
             string code = executeRequest.Code;
+            System.IO.TextWriter error = new System.IO.StreamWriter("log.txt");
+            Console.SetError(error);
             ExecutionResult results = this.replEngine.Execute(code);
+            error.Close();
             string codeOutput = this.GetCodeOutput(results);
             string codeHtmlOutput = this.GetCodeHtmlOutput(results);
 
