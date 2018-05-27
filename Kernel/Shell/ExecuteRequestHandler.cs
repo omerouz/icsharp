@@ -23,15 +23,17 @@ namespace iCSharp.Kernel.Shell
 
         private readonly IReplEngine replEngine;
 
-		private readonly IMessageSender messageSender;
+        private readonly IMessageSender messageSender;
 
-		private int executionCount = 1;
+        private int executionCount = 1;
 
+        System.IO.TextWriter errStream = new System.IO.StreamWriter(@"errlog.log");
+ 
         public ExecuteRequestHandler(ILog logger, IReplEngine replEngine, IMessageSender messageSender)
         {
             this.logger = logger;
             this.replEngine = replEngine;
-			this.messageSender = messageSender;
+            this.messageSender = messageSender;
         }
 
         public void HandleMessage(Message message, RouterSocket serverSocket, PublisherSocket ioPub)
@@ -47,37 +49,26 @@ namespace iCSharp.Kernel.Shell
             // 2: Send execute input on IOPub
             this.SendInputMessageToIOPub(message, ioPub, executeRequest.Code);
 
-            // MWANA ERROR LOGS:
-
-            DateTime appStart = DateTime.Now;
-            string fn = @"c:\temp\errlog" + appStart.ToString("yyyyMMddHHmm") + ".log";
-            System.IO.TextWriter errStream = new System.IO.StreamWriter(fn);
-
-            string appName = typeof(ExecuteRequestHandler).Assembly.Location;
-            appName = appName.Substring(appName.LastIndexOf('\\') + 1);
-
-            Console.SetError(errStream);
-            // Write file header.
-            Console.Error.WriteLine("Error Log for Application {0}", appName);
-            Console.Error.WriteLine();
-            Console.Error.WriteLine("Application started at {0}.", appStart);
-            Console.Error.WriteLine();
-
             //Console.WriteLine(message.ToString());
             //Console.WriteLine("Execute Request Handler, message");
 
             // 3: Evaluate the C# code
             string code = executeRequest.Code;
+
+            System.IO.TextWriter error = new System.IO.StreamWriter("log.txt");
+            Console.SetError(error);
+
             ExecutionResult results = this.replEngine.Execute(code);
+            error.Close();
 
             //Console.WriteLine(code);
             //Console.WriteLine("Execute Request Handler, code");
 
             string codeOutput = this.GetCodeOutput(results);
 
-            Console.WriteLine(codeOutput);
+            //Console.WriteLine(codeOutput);
             string codeHtmlOutput = this.GetCodeHtmlOutput(results);
-            Console.WriteLine(codeHtmlOutput);
+            //Console.WriteLine(codeHtmlOutput);
 
 
             Dictionary<string, object> data = new Dictionary<string, object>()
@@ -104,7 +95,6 @@ namespace iCSharp.Kernel.Shell
             this.SendMessageToIOPub(message, ioPub, StatusValues.Idle);
 
             this.executionCount += 1;
-            Console.Error.Close();
 
         }
 
@@ -116,7 +106,6 @@ namespace iCSharp.Kernel.Shell
             {
                 sb.Append(result);
             }
-
             return sb.ToString();
         }
 
@@ -128,25 +117,25 @@ namespace iCSharp.Kernel.Shell
                 string encoded = HttpUtility.HtmlEncode(tuple.Item1);
                 sb.Append(string.Format("<font style=\"color:{0}\">{1}</font>", tuple.Item2.ToString(), encoded));
             }
-
             return sb.ToString();
         }
 
         public void SendMessageToIOPub(Message message, PublisherSocket ioPub, string statusValue)
         {
-            Dictionary<string,string> content = new Dictionary<string, string>();
+            Dictionary<string, string> content = new Dictionary<string, string>();
             content.Add("execution_state", statusValue);
             Message ioPubMessage = MessageBuilder.CreateMessage(MessageTypeValues.Status,
                 JsonSerializer.Serialize(content), message.Header);
 
             this.logger.Info(string.Format("Sending message to IOPub {0}", JsonSerializer.Serialize(ioPubMessage)));
-			this.messageSender.Send(ioPubMessage, ioPub);
+            this.messageSender.Send(ioPubMessage, ioPub);
             this.logger.Info("Message Sent");
+
         }
 
         public void SendOutputMessageToIOPub(Message message, PublisherSocket ioPub, DisplayData data)
         {
-            Dictionary<string,object> content = new Dictionary<string, object>();
+            Dictionary<string, object> content = new Dictionary<string, object>();
             content.Add("execution_count", this.executionCount);
             content.Add("data", data.Data);
             content.Add("metadata", data.MetaData);
@@ -155,7 +144,8 @@ namespace iCSharp.Kernel.Shell
                 JsonSerializer.Serialize(content), message.Header);
 
             this.logger.Info(string.Format("Sending message to IOPub {0}", JsonSerializer.Serialize(outputMessage)));
-			this.messageSender.Send(outputMessage, ioPub);
+            this.messageSender.Send(outputMessage, ioPub);
+
         }
 
         public void SendInputMessageToIOPub(Message message, PublisherSocket ioPub, string code)
@@ -168,7 +158,8 @@ namespace iCSharp.Kernel.Shell
                 message.Header);
 
             this.logger.Info(string.Format("Sending message to IOPub {0}", JsonSerializer.Serialize(executeInputMessage)));
-			this.messageSender.Send(executeInputMessage, ioPub);
+            this.messageSender.Send(executeInputMessage, ioPub);
+
         }
 
         public void SendExecuteReplyMessage(Message message, RouterSocket shellSocket)

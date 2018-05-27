@@ -1,8 +1,20 @@
 ﻿<Properties StartupConfiguration="{A785BBFB-CD6C-48B7-8BEA-DC241ACB6D70}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Engine/src/ScriptCs.Contracts/ScriptCs.Contracts.csproj">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Kernel/KernelCreator.cs">
     <Files>
-      <File FileName=".nuget/NuGet.Config" Line="3" Column="13" />
-      <File FileName="Engine/src/ScriptCs.Contracts/ScriptCs.Contracts.csproj" Line="124" Column="10" />
+      <File FileName="Kernel/Program.cs" Line="57" Column="122" />
+      <File FileName="Kernel/Heartbeat/Heartbeat.cs" Line="44" Column="9" />
+      <File FileName="Kernel/Shell/IShellMessageHandler.cs" Line="12" Column="14" />
+      <File FileName="Kernel/Shell/KernelInfoRequestHandler.cs" Line="22" Column="21" />
+      <File FileName="Kernel/ScriptEngine/IReplEngine.cs" Line="6" Column="32" />
+      <File FileName="Kernel/ScriptEngine/MemoryBufferConsole.cs" Line="8" Column="18" />
+      <File FileName="Kernel/Shell/ExecuteRequestHandler.cs" Line="30" Column="16" />
+      <File FileName="Kernel/ScriptEngine/ReplEngineWrapper.cs" Line="28" Column="49" />
+      <File FileName="Kernel/Shell/Shell.cs" Line="71" Column="1" />
+      <File FileName="Kernel/Shell/CompleteRequestHandler.cs" Line="23" Column="26" />
+      <File FileName="Kernel/Control/Control.cs" Line="27" Column="13" />
+      <File FileName="Engine/src/ScriptCs.Core/ReplCommands/HelpCommand.cs" Line="73" Column="13" />
+      <File FileName="Kernel/Stdin/Stdin.cs" Line="26" Column="13" />
+      <File FileName="Kernel/KernelCreator.cs" Line="28" Column="39" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
