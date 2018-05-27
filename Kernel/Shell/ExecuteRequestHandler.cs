@@ -47,11 +47,38 @@ namespace iCSharp.Kernel.Shell
             // 2: Send execute input on IOPub
             this.SendInputMessageToIOPub(message, ioPub, executeRequest.Code);
 
+            // MWANA ERROR LOGS:
+
+            DateTime appStart = DateTime.Now;
+            string fn = @"c:\temp\errlog" + appStart.ToString("yyyyMMddHHmm") + ".log";
+            System.IO.TextWriter errStream = new System.IO.StreamWriter(fn);
+
+            string appName = typeof(ExecuteRequestHandler).Assembly.Location;
+            appName = appName.Substring(appName.LastIndexOf('\\') + 1);
+
+            Console.SetError(errStream);
+            // Write file header.
+            Console.Error.WriteLine("Error Log for Application {0}", appName);
+            Console.Error.WriteLine();
+            Console.Error.WriteLine("Application started at {0}.", appStart);
+            Console.Error.WriteLine();
+
+            //Console.WriteLine(message.ToString());
+            //Console.WriteLine("Execute Request Handler, message");
+
             // 3: Evaluate the C# code
             string code = executeRequest.Code;
             ExecutionResult results = this.replEngine.Execute(code);
+
+            //Console.WriteLine(code);
+            //Console.WriteLine("Execute Request Handler, code");
+
             string codeOutput = this.GetCodeOutput(results);
+
+            Console.WriteLine(codeOutput);
             string codeHtmlOutput = this.GetCodeHtmlOutput(results);
+            Console.WriteLine(codeHtmlOutput);
+
 
             Dictionary<string, object> data = new Dictionary<string, object>()
             {
@@ -77,6 +104,7 @@ namespace iCSharp.Kernel.Shell
             this.SendMessageToIOPub(message, ioPub, StatusValues.Idle);
 
             this.executionCount += 1;
+            Console.Error.Close();
 
         }
 
